@@ -89,10 +89,37 @@ let receivedAmount = 0
 let recievedSector = 0
 radio.setGroup(0)
 recievedSector = 0
+let motorSpeed = 0
 basic.forever(function () {
-    displayImage(recievedSector).showImage(0)
+    motorSpeed = Math.map(receivedAmount, 0, 1024, 0, 4)
     if (recievedSector == 0 || receivedAmount == 0) {
         robotbit.MotorStopAll()
+    } else if (recievedSector == 1) {
+        robotbit.MotorRunDual(
+        robotbit.Motors.M1A,
+        128,
+        robotbit.Motors.M2A,
+        128
+        )
+        robotbit.MotorRunDual(
+        robotbit.Motors.M1B,
+        -128,
+        robotbit.Motors.M2B,
+        -128
+        )
+    } else if (recievedSector == 2) {
+        robotbit.MotorRunDual(
+        robotbit.Motors.M1A,
+        -128,
+        robotbit.Motors.M2A,
+        -128
+        )
+        robotbit.MotorRunDual(
+        robotbit.Motors.M1B,
+        128,
+        robotbit.Motors.M2B,
+        128
+        )
     } else if (recievedSector == 3) {
         robotbit.MotorRunDual(
         robotbit.Motors.M1A,
@@ -100,16 +127,49 @@ basic.forever(function () {
         robotbit.Motors.M1B,
         128
         )
+        robotbit.MotorRunDual(
+        robotbit.Motors.M2A,
+        128,
+        robotbit.Motors.M2B,
+        128
+        )
     } else if (recievedSector == 4) {
+        robotbit.MotorRunDual(
+        robotbit.Motors.M1A,
+        -128,
+        robotbit.Motors.M1B,
+        -128
+        )
         robotbit.MotorRunDual(
         robotbit.Motors.M2A,
         -128,
         robotbit.Motors.M2B,
         -128
         )
-    } else if (recievedSector == 6) {
+    } else if (recievedSector == 5) {
         robotbit.MotorRunDual(
         robotbit.Motors.M1A,
+        128,
+        robotbit.Motors.M2A,
+        128
+        )
+    } else if (recievedSector == 6) {
+        robotbit.MotorRunDual(
+        robotbit.Motors.M1B,
+        128,
+        robotbit.Motors.M2B,
+        128
+        )
+    } else if (recievedSector == 7) {
+        robotbit.MotorRunDual(
+        robotbit.Motors.M1A,
+        -128,
+        robotbit.Motors.M2A,
+        -128
+        )
+    } else if (recievedSector == 8) {
+        robotbit.MotorRunDual(
+        robotbit.Motors.M1B,
         128,
         robotbit.Motors.M2B,
         128
@@ -117,4 +177,5 @@ basic.forever(function () {
     } else {
         robotbit.MotorStopAll()
     }
+    displayImage(recievedSector).showImage(0)
 })
