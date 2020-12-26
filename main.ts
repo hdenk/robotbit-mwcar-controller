@@ -91,4 +91,30 @@ radio.setGroup(0)
 recievedSector = 0
 basic.forever(function () {
     displayImage(recievedSector).showImage(0)
+    if (recievedSector == 0 || receivedAmount == 0) {
+        robotbit.MotorStopAll()
+    } else if (recievedSector == 3) {
+        robotbit.MotorRunDual(
+        robotbit.Motors.M1A,
+        128,
+        robotbit.Motors.M1B,
+        128
+        )
+    } else if (recievedSector == 4) {
+        robotbit.MotorRunDual(
+        robotbit.Motors.M2A,
+        -128,
+        robotbit.Motors.M2B,
+        -128
+        )
+    } else if (recievedSector == 6) {
+        robotbit.MotorRunDual(
+        robotbit.Motors.M1A,
+        128,
+        robotbit.Motors.M2B,
+        128
+        )
+    } else {
+        robotbit.MotorStopAll()
+    }
 })
