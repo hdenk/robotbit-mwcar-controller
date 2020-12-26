@@ -1,7 +1,6 @@
 radio.onReceivedNumberDeprecated(function (receivedNumber) {
     receivedAmount = Math.idiv(receivedNumber, 1000)
-    recievedSector = receivedNumber - receivedAmount
-    basic.showNumber(receivedAmount)
+    recievedSector = receivedNumber - receivedAmount * 1000
 })
 function displayImage (sector: number) {
     if (sector == 0) {
@@ -15,17 +14,17 @@ function displayImage (sector: number) {
     } else if (sector == 1) {
         return images.createImage(`
             . . # . .
-            . . . # .
+            . # . . .
             # # # # #
-            . . . # .
+            . # . . .
             . . # . .
             `)
     } else if (sector == 2) {
         return images.createImage(`
             . . # . .
-            . # . . .
+            . . . # .
             # # # # #
-            . # . . .
+            . . . # .
             . . # . .
             `)
     } else if (sector == 3) {
