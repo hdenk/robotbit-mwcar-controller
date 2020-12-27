@@ -1,9 +1,125 @@
+function moveSouthEast () {
+    robotbit.MotorRunDual(
+    robotbit.Motors.M1A,
+    motorSpeed * -1,
+    robotbit.Motors.M2A,
+    motorSpeed * -1
+    )
+}
 radio.onReceivedNumberDeprecated(function (receivedNumber) {
     receivedAmount = Math.idiv(receivedNumber, 1000)
     recievedSector = receivedNumber - receivedAmount * 1000
 })
+function moveEast () {
+    robotbit.MotorRunDual(
+    robotbit.Motors.M2B,
+    motorSpeed,
+    robotbit.Motors.M2A,
+    motorSpeed * -1
+    )
+    robotbit.MotorRunDual(
+    robotbit.Motors.M1A,
+    motorSpeed * -1,
+    robotbit.Motors.M1B,
+    motorSpeed
+    )
+}
+function spinLeft () {
+    robotbit.MotorRunDual(
+    robotbit.Motors.M2B,
+    motorSpeed * -1,
+    robotbit.Motors.M2A,
+    motorSpeed * -1
+    )
+    robotbit.MotorRunDual(
+    robotbit.Motors.M1A,
+    motorSpeed,
+    robotbit.Motors.M1B,
+    motorSpeed
+    )
+}
+function moveWest () {
+    robotbit.MotorRunDual(
+    robotbit.Motors.M2B,
+    motorSpeed * -1,
+    robotbit.Motors.M2A,
+    motorSpeed
+    )
+    robotbit.MotorRunDual(
+    robotbit.Motors.M1A,
+    motorSpeed,
+    robotbit.Motors.M1B,
+    motorSpeed * -1
+    )
+}
+function moveSouth () {
+    robotbit.MotorRunDual(
+    robotbit.Motors.M2B,
+    motorSpeed * -1,
+    robotbit.Motors.M2A,
+    motorSpeed * -1
+    )
+    robotbit.MotorRunDual(
+    robotbit.Motors.M1A,
+    motorSpeed * -1,
+    robotbit.Motors.M1B,
+    motorSpeed * -1
+    )
+}
+function moveNorthWest () {
+    robotbit.MotorRunDual(
+    robotbit.Motors.M2B,
+    motorSpeed * -1,
+    robotbit.Motors.M1B,
+    motorSpeed * -1
+    )
+}
+function moveNorth () {
+    robotbit.MotorRunDual(
+    robotbit.Motors.M2B,
+    motorSpeed,
+    robotbit.Motors.M2A,
+    motorSpeed
+    )
+    robotbit.MotorRunDual(
+    robotbit.Motors.M1A,
+    motorSpeed,
+    robotbit.Motors.M1B,
+    motorSpeed
+    )
+}
 function calcMotorSpeed (amount: number) {
     return Math.map(Math.constrain(amount, 0, 1024), 0, 1024, 0, 256)
+}
+function spinRight () {
+    robotbit.MotorRunDual(
+    robotbit.Motors.M2B,
+    motorSpeed,
+    robotbit.Motors.M2A,
+    motorSpeed
+    )
+    robotbit.MotorRunDual(
+    robotbit.Motors.M1A,
+    motorSpeed * -1,
+    robotbit.Motors.M1B,
+    motorSpeed * -1
+    )
+}
+function moveNorthEast () {
+    robotbit.MotorRunDual(
+    robotbit.Motors.M2B,
+    motorSpeed,
+    robotbit.Motors.M1B,
+    motorSpeed
+    )
+}
+function moveSouthWest () {
+    robotbit.MotorRunDual(
+    robotbit.Motors.M1A,
+    motorSpeed,
+    robotbit.Motors.M2A,
+    motorSpeed
+    )
 }
 function displayImage (sector: number) {
     if (sector == 0) {
@@ -88,96 +204,33 @@ function displayImage (sector: number) {
             `)
     }
 }
+let motorSpeed = 0
 let receivedAmount = 0
 let recievedSector = 0
 radio.setGroup(0)
 recievedSector = 0
 receivedAmount = 0
-let motorSpeed = 0
+motorSpeed = 0
 basic.forever(function () {
     motorSpeed = calcMotorSpeed(receivedAmount)
     if (recievedSector == 0 || receivedAmount == 0) {
         robotbit.MotorStopAll()
     } else if (recievedSector == 1) {
-        robotbit.MotorRunDual(
-        robotbit.Motors.M2B,
-        motorSpeed,
-        robotbit.Motors.M2A,
-        motorSpeed
-        )
-        robotbit.MotorRunDual(
-        robotbit.Motors.M1A,
-        motorSpeed,
-        robotbit.Motors.M1B,
-        motorSpeed
-        )
+        moveNorth()
     } else if (recievedSector == 2) {
-        robotbit.MotorRunDual(
-        robotbit.Motors.M1B,
-        motorSpeed * -1,
-        robotbit.Motors.M2A,
-        motorSpeed * -1
-        )
-        robotbit.MotorRunDual(
-        robotbit.Motors.M1A,
-        motorSpeed * -1,
-        robotbit.Motors.M1B,
-        motorSpeed * -1
-        )
+        moveSouth()
     } else if (recievedSector == 3) {
-        robotbit.MotorRunDual(
-        robotbit.Motors.M2B,
-        motorSpeed * -1,
-        robotbit.Motors.M2A,
-        motorSpeed
-        )
-        robotbit.MotorRunDual(
-        robotbit.Motors.M1A,
-        motorSpeed,
-        robotbit.Motors.M1B,
-        motorSpeed * -1
-        )
+        moveWest()
     } else if (recievedSector == 4) {
-        robotbit.MotorRunDual(
-        robotbit.Motors.M2B,
-        motorSpeed,
-        robotbit.Motors.M2A,
-        motorSpeed * -1
-        )
-        robotbit.MotorRunDual(
-        robotbit.Motors.M1A,
-        motorSpeed * -1,
-        robotbit.Motors.M1B,
-        motorSpeed
-        )
+        moveEast()
     } else if (recievedSector == 5) {
-        robotbit.MotorRunDual(
-        robotbit.Motors.M2B,
-        motorSpeed,
-        robotbit.Motors.M1B,
-        motorSpeed
-        )
+        moveNorthWest()
     } else if (recievedSector == 6) {
-        robotbit.MotorRunDual(
-        robotbit.Motors.M1A,
-        motorSpeed,
-        robotbit.Motors.M2A,
-        motorSpeed
-        )
+        moveNorthEast()
     } else if (recievedSector == 7) {
-        robotbit.MotorRunDual(
-        robotbit.Motors.M2B,
-        motorSpeed * -1,
-        robotbit.Motors.M1B,
-        motorSpeed * -1
-        )
+        moveSouthEast()
     } else if (recievedSector == 8) {
-        robotbit.MotorRunDual(
-        robotbit.Motors.M1A,
-        motorSpeed * -1,
-        robotbit.Motors.M2A,
-        motorSpeed * -1
-        )
+        moveSouthWest()
     } else {
         robotbit.MotorStopAll()
     }
