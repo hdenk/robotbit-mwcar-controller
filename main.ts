@@ -133,17 +133,17 @@ function displayImage (sector: number) {
     } else if (sector == 1) {
         return images.createImage(`
             . . # . .
-            . # . . .
+            . . . # .
             # # # # #
-            . # . . .
+            . . . # .
             . . # . .
             `)
     } else if (sector == 2) {
         return images.createImage(`
             . . # . .
-            . . . # .
+            . # . . .
             # # # # #
-            . . . # .
+            . # . . .
             . . # . .
             `)
     } else if (sector == 3) {
@@ -224,13 +224,13 @@ basic.forever(function () {
     } else if (recievedSector == 4) {
         moveSouth()
     } else if (recievedSector == 5) {
-        moveNorthWest()
+    	
     } else if (recievedSector == 6) {
-        moveNorthEast()
+    	
     } else if (recievedSector == 7) {
-        moveSouthEast()
+    	
     } else if (recievedSector == 8) {
-        moveSouthWest()
+    	
     } else {
         robotbit.MotorStopAll()
     }
