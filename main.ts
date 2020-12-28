@@ -178,37 +178,45 @@ function displayMovement (buttonState: number, sector: number) {
             . . # . .
             `)
     } else if (sector == 5) {
-        return images.createImage(`
-            # # # # .
-            # # . . .
-            # . # . .
-            # . # . .
-            . . # . .
-            `)
+        if (moveNESWNWSE) {
+            return images.createImage(`
+                # # # # .
+                # # . . .
+                # . # . .
+                # . # . .
+                . . # . .
+                `)
+        }
     } else if (sector == 6) {
-        return images.createImage(`
-            . # # # #
-            . . . # #
-            . . # . #
-            . . # . #
-            . . # . .
-            `)
+        if (moveNESWNWSE) {
+            return images.createImage(`
+                . # # # #
+                . . . # #
+                . . # . #
+                . . # . #
+                . . # . .
+                `)
+        }
     } else if (sector == 7) {
-        return images.createImage(`
-            . . # . .
-            . . # . #
-            . . # . #
-            . . . # #
-            . # # # #
-            `)
+        if (moveNESWNWSE) {
+            return images.createImage(`
+                . . # . .
+                . . # . #
+                . . # . #
+                . . . # #
+                . # # # #
+                `)
+        }
     } else if (sector == 8) {
-        return images.createImage(`
-            . . # . .
-            # . # . .
-            # . # . .
-            # # . . .
-            # # # # .
-            `)
+        if (moveNESWNWSE) {
+            return images.createImage(`
+                . . # . .
+                # . # . .
+                # . # . .
+                # # . . .
+                # # # # .
+                `)
+        }
     } else {
         return images.createImage(`
             . . . . .
@@ -222,8 +230,9 @@ function displayMovement (buttonState: number, sector: number) {
 let receivedNumberStern = 0
 let motorSpeed = 0
 let receivedNumber = 0
-radio.setGroup(0)
 let moveNESWNWSE = false
+radio.setGroup(0)
+moveNESWNWSE = false
 receivedNumber = 0
 let recievedSector = 0
 let receivedAmount = 0
