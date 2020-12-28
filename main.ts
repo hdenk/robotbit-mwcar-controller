@@ -208,6 +208,7 @@ let motorSpeed = 0
 let receivedAmount = 0
 let recievedSector = 0
 radio.setGroup(0)
+let moveNESWNWSE = false
 recievedSector = 0
 receivedAmount = 0
 motorSpeed = 0
@@ -224,13 +225,21 @@ basic.forever(function () {
     } else if (recievedSector == 4) {
         moveSouth()
     } else if (recievedSector == 5) {
-    	
+        if (moveNESWNWSE) {
+            moveNorthWest()
+        }
     } else if (recievedSector == 6) {
-    	
+        if (moveNESWNWSE) {
+            moveNorthEast()
+        }
     } else if (recievedSector == 7) {
-    	
+        if (moveNESWNWSE) {
+            moveSouthEast()
+        }
     } else if (recievedSector == 8) {
-    	
+        if (moveNESWNWSE) {
+            moveSouthWest()
+        }
     } else {
         robotbit.MotorStopAll()
     }
