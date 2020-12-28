@@ -7,8 +7,10 @@ function moveSouthEast () {
     )
 }
 radio.onReceivedNumberDeprecated(function (receivedNumber) {
-    receivedAmount = Math.idiv(receivedNumber, 1000)
-    recievedSector = receivedNumber - receivedAmount * 1000
+    receivedButtonState = Math.idiv(receivedNumber, 65536)
+    receivedNumberStern = receivedNumber - receivedButtonState * 65536
+    receivedAmount = Math.idiv(receivedNumberStern, 16)
+    recievedSector = receivedNumberStern - receivedAmount * 16
 })
 function moveEast () {
     robotbit.MotorRunDual(
@@ -121,8 +123,8 @@ function moveSouthWest () {
     motorSpeed
     )
 }
-function displayImage (sector: number) {
-    if (sector == 0) {
+function displayMovement (buttonState: number, sector: number) {
+    if (buttonState == 0) {
         return images.createImage(`
             # . . . #
             . # . # .
@@ -130,7 +132,7 @@ function displayImage (sector: number) {
             . # . # .
             # . . . #
             `)
-    } else if (sector == 1) {
+    } else if (buttonState == 1) {
         return images.createImage(`
             . . # . .
             . . . # .
@@ -138,7 +140,7 @@ function displayImage (sector: number) {
             . . . # .
             . . # . .
             `)
-    } else if (sector == 2) {
+    } else if (buttonState == 2) {
         return images.createImage(`
             . . # . .
             . # . . .
@@ -146,7 +148,7 @@ function displayImage (sector: number) {
             . # . . .
             . . # . .
             `)
-    } else if (sector == 3) {
+    } else if (buttonState == 3) {
         return images.createImage(`
             . . # . .
             . # # # .
@@ -154,7 +156,7 @@ function displayImage (sector: number) {
             . . # . .
             . . # . .
             `)
-    } else if (sector == 4) {
+    } else if (buttonState == 4) {
         return images.createImage(`
             . . # . .
             . . # . .
@@ -162,7 +164,7 @@ function displayImage (sector: number) {
             . # # # .
             . . # . .
             `)
-    } else if (sector == 5) {
+    } else if (buttonState == 5) {
         return images.createImage(`
             # # # # .
             # # . . .
@@ -170,7 +172,7 @@ function displayImage (sector: number) {
             # . # . .
             . . # . .
             `)
-    } else if (sector == 6) {
+    } else if (buttonState == 6) {
         return images.createImage(`
             . # # # #
             . . . # #
@@ -178,7 +180,7 @@ function displayImage (sector: number) {
             . . # . #
             . . # . .
             `)
-    } else if (sector == 7) {
+    } else if (buttonState == 7) {
         return images.createImage(`
             . . # . .
             . . # . #
@@ -186,7 +188,7 @@ function displayImage (sector: number) {
             . . . # #
             . # # # #
             `)
-    } else if (sector == 8) {
+    } else if (buttonState == 8) {
         return images.createImage(`
             . . # . .
             # . # . .
@@ -204,44 +206,57 @@ function displayImage (sector: number) {
             `)
     }
 }
+let receivedNumberStern = 0
 let motorSpeed = 0
+let receivedButtonState = 0
 let receivedAmount = 0
 let recievedSector = 0
 radio.setGroup(0)
 let moveNESWNWSE = false
 recievedSector = 0
 receivedAmount = 0
+receivedButtonState = 0
 motorSpeed = 0
 basic.forever(function () {
     motorSpeed = calcMotorSpeed(receivedAmount)
-    if (recievedSector == 0 || receivedAmount == 0) {
-        robotbit.MotorStopAll()
-    } else if (recievedSector == 1) {
-        moveWest()
-    } else if (recievedSector == 2) {
-        moveEast()
-    } else if (recievedSector == 3) {
-        moveNorth()
-    } else if (recievedSector == 4) {
-        moveSouth()
-    } else if (recievedSector == 5) {
-        if (moveNESWNWSE) {
-            moveNorthWest()
-        }
-    } else if (recievedSector == 6) {
-        if (moveNESWNWSE) {
-            moveNorthEast()
-        }
-    } else if (recievedSector == 7) {
-        if (moveNESWNWSE) {
-            moveSouthEast()
-        }
-    } else if (recievedSector == 8) {
-        if (moveNESWNWSE) {
-            moveSouthWest()
+    if (receivedButtonState > 0) {
+        if (receivedButtonState == 1) {
+            spinLeft()
+        } else if (receivedButtonState == 2) {
+            spinRight()
+        } else {
+            robotbit.MotorStopAll()
         }
     } else {
-        robotbit.MotorStopAll()
+        if (recievedSector == 0 || receivedAmount == 0) {
+            robotbit.MotorStopAll()
+        } else if (recievedSector == 1) {
+            moveWest()
+        } else if (recievedSector == 2) {
+            moveEast()
+        } else if (recievedSector == 3) {
+            moveNorth()
+        } else if (recievedSector == 4) {
+            moveSouth()
+        } else if (recievedSector == 5) {
+            if (moveNESWNWSE) {
+                moveNorthWest()
+            }
+        } else if (recievedSector == 6) {
+            if (moveNESWNWSE) {
+                moveNorthEast()
+            }
+        } else if (recievedSector == 7) {
+            if (moveNESWNWSE) {
+                moveSouthEast()
+            }
+        } else if (recievedSector == 8) {
+            if (moveNESWNWSE) {
+                moveSouthWest()
+            }
+        } else {
+            robotbit.MotorStopAll()
+        }
     }
-    displayImage(recievedSector).showImage(0)
+    displayMovement(receivedButtonState, recievedSector).showImage(0)
 })
