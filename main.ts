@@ -124,7 +124,23 @@ function moveSouthWest () {
     )
 }
 function displayMovement (buttonState: number, sector: number) {
-    if (buttonState == 0) {
+    if (buttonState == 1) {
+        return images.createImage(`
+            . . . . .
+            # # # . .
+            # . # # #
+            # # # . .
+            . . . . .
+            `)
+    } else if (buttonState == 2) {
+        return images.createImage(`
+            . . . . .
+            . . # # #
+            # # # . #
+            . . # # #
+            . . . . .
+            `)
+    } else if (sector == 0) {
         return images.createImage(`
             # . . . #
             . # . # .
@@ -132,7 +148,7 @@ function displayMovement (buttonState: number, sector: number) {
             . # . # .
             # . . . #
             `)
-    } else if (buttonState == 1) {
+    } else if (sector == 1) {
         return images.createImage(`
             . . # . .
             . . . # .
