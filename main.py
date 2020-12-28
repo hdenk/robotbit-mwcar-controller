@@ -93,9 +93,9 @@ function calcMotorSpeed (amount: number) {
 function spinRight () {
     robotbit.MotorRunDual(
     robotbit.Motors.M2B,
-    motorSpeed * -1,
+    motorSpeed,
     robotbit.Motors.M2A,
-    motorSpeed * -1
+    motorSpeed
     )
     robotbit.MotorRunDual(
     robotbit.Motors.M1A,
@@ -137,8 +137,7 @@ function displayMovement (buttonState: number, sector: number) {
             . . # # #
             . . . . .
             `)
-    }
-    if (sector == 0) {
+    } else if (sector == 0) {
         return images.createImage(`
             # . . . #
             . # . # .
@@ -179,51 +178,61 @@ function displayMovement (buttonState: number, sector: number) {
             . . # . .
             `)
     } else if (sector == 5) {
-        return images.createImage(`
-            # # # # .
-            # # . . .
-            # . # . .
-            # . # . .
-            . . # . .
-            `)
+        if (moveNESWNWSE) {
+            return images.createImage(`
+                # # # # .
+                # # . . .
+                # . # . .
+                # . # . .
+                . . # . .
+                `)
+        }
     } else if (sector == 6) {
-        return images.createImage(`
-            . # # # #
-            . . . # #
-            . . # . #
-            . . # . #
-            . . # . .
-            `)
+        if (moveNESWNWSE) {
+            return images.createImage(`
+                . # # # #
+                . . . # #
+                . . # . #
+                . . # . #
+                . . # . .
+                `)
+        }
     } else if (sector == 7) {
-        return images.createImage(`
-            . . # . .
-            . . # . #
-            . . # . #
-            . . . # #
-            . # # # #
-            `)
+        if (moveNESWNWSE) {
+            return images.createImage(`
+                . . # . .
+                . . # . #
+                . . # . #
+                . . . # #
+                . # # # #
+                `)
+        }
     } else if (sector == 8) {
+        if (moveNESWNWSE) {
+            return images.createImage(`
+                . . # . .
+                # . # . .
+                # . # . .
+                # # . . .
+                # # # # .
+                `)
+        }
+    } else {
         return images.createImage(`
-            . . # . .
-            # . # . .
-            # . # . .
-            # # . . .
-            # # # # .
+            . . . . .
+            . # . # .
+            . . . . .
+            . # # # .
+            # . . . #
             `)
     }
-    return images.createImage(`
-        . . . . .
-        . # . # .
-        . . . . .
-        . # # # .
-        # . . . #
-        `)
 }
 let receivedNumberStern = 0
 let motorSpeed = 0
 let receivedNumber = 0
-radio.setGroup(0)
 let moveNESWNWSE = false
+radio.setGroup(0)
+moveNESWNWSE = false
 receivedNumber = 0
 let recievedSector = 0
 let receivedAmount = 0
