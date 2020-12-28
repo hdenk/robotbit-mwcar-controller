@@ -6,12 +6,6 @@ function moveSouthEast () {
     motorSpeed * -1
     )
 }
-radio.onReceivedNumberDeprecated(function (receivedNumber) {
-    receivedButtonState = Math.idiv(receivedNumber, 65536)
-    receivedNumberStern = receivedNumber - receivedButtonState * 65536
-    receivedAmount = Math.idiv(receivedNumberStern, 16)
-    recievedSector = receivedNumberStern - receivedAmount * 16
-})
 function moveEast () {
     robotbit.MotorRunDual(
     robotbit.Motors.M2B,
@@ -76,6 +70,9 @@ function moveNorthWest () {
     motorSpeed
     )
 }
+radio.onReceivedNumberDeprecated(function (receivedNumberEVT) {
+    receivedNumber = receivedNumberEVT
+})
 function moveNorth () {
     robotbit.MotorRunDual(
     robotbit.Motors.M2B,
@@ -156,7 +153,7 @@ function displayMovement (buttonState: number, sector: number) {
             . . . # .
             . . # . .
             `)
-    } else if (buttonState == 2) {
+    } else if (sector == 2) {
         return images.createImage(`
             . . # . .
             . # . . .
@@ -164,7 +161,7 @@ function displayMovement (buttonState: number, sector: number) {
             . # . . .
             . . # . .
             `)
-    } else if (buttonState == 3) {
+    } else if (sector == 3) {
         return images.createImage(`
             . . # . .
             . # # # .
@@ -172,7 +169,7 @@ function displayMovement (buttonState: number, sector: number) {
             . . # . .
             . . # . .
             `)
-    } else if (buttonState == 4) {
+    } else if (sector == 4) {
         return images.createImage(`
             . . # . .
             . . # . .
@@ -180,7 +177,7 @@ function displayMovement (buttonState: number, sector: number) {
             . # # # .
             . . # . .
             `)
-    } else if (buttonState == 5) {
+    } else if (sector == 5) {
         return images.createImage(`
             # # # # .
             # # . . .
@@ -188,7 +185,7 @@ function displayMovement (buttonState: number, sector: number) {
             # . # . .
             . . # . .
             `)
-    } else if (buttonState == 6) {
+    } else if (sector == 6) {
         return images.createImage(`
             . # # # #
             . . . # #
@@ -196,7 +193,7 @@ function displayMovement (buttonState: number, sector: number) {
             . . # . #
             . . # . .
             `)
-    } else if (buttonState == 7) {
+    } else if (sector == 7) {
         return images.createImage(`
             . . # . .
             . . # . #
@@ -204,7 +201,7 @@ function displayMovement (buttonState: number, sector: number) {
             . . . # #
             . # # # #
             `)
-    } else if (buttonState == 8) {
+    } else if (sector == 8) {
         return images.createImage(`
             . . # . .
             # . # . .
@@ -224,16 +221,19 @@ function displayMovement (buttonState: number, sector: number) {
 }
 let receivedNumberStern = 0
 let motorSpeed = 0
-let receivedButtonState = 0
-let receivedAmount = 0
-let recievedSector = 0
+let receivedNumber = 0
 radio.setGroup(0)
 let moveNESWNWSE = false
-recievedSector = 0
-receivedAmount = 0
-receivedButtonState = 0
+receivedNumber = 0
+let recievedSector = 0
+let receivedAmount = 0
+let receivedButtonState = 0
 motorSpeed = 0
 basic.forever(function () {
+    receivedButtonState = Math.idiv(receivedNumber, 65536)
+    receivedNumberStern = receivedNumber - receivedButtonState * 65536
+    receivedAmount = Math.idiv(receivedNumberStern, 16)
+    recievedSector = receivedNumberStern - receivedAmount * 16
     motorSpeed = calcMotorSpeed(receivedAmount)
     if (receivedButtonState > 0) {
         if (receivedButtonState == 1) {
