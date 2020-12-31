@@ -267,6 +267,7 @@ basic.forever(function () {
             spinRight()
         } else {
             robotbit.MotorStopAll()
+            lightShow()
         }
     } else {
         if (recievedSector == 0 || receivedAmount == 0) {
