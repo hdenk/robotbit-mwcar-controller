@@ -219,9 +219,34 @@ function displayMovement (buttonState: number, sector: number) {
         # . . . #
         `)
 }
+function lightShow () {
+    colors = [neopixel.rgb(1, 0, 0), neopixel.rgb(0, 1, 0), neopixel.rgb(0, 0, 1)]
+    strip = neopixel.create(DigitalPin.P16, 4, NeoPixelMode.RGB)
+    for (let index = 0; index < 20; index++) {
+        strip.clear()
+        strip.setPixelColor(0, neopixel.colors(NeoPixelColors.Black))
+        strip.setPixelColor(1, neopixel.colors(NeoPixelColors.Black))
+        strip.setPixelColor(2, neopixel.colors(NeoPixelColors.Black))
+        strip.setPixelColor(3, neopixel.colors(NeoPixelColors.Black))
+        strip.setPixelColor(randint(0, 3), colors[randint(0, 2)])
+        strip.show()
+        basic.pause(100)
+    }
+    strip.showColor(neopixel.colors(NeoPixelColors.Black))
+}
 let receivedNumberStern = 0
+let strip: neopixel.Strip = null
+let colors: number[] = []
 let motorSpeed = 0
 let receivedNumber = 0
+let playMelodyOnStartup = false
+if (playMelodyOnStartup) {
+    music.playMelody("- F A E F - A - ", 120)
+}
+let lightShowOnStartup = true
+if (lightShowOnStartup) {
+    lightShow()
+}
 radio.setGroup(0)
 let moveNESWNWSE = false
 receivedNumber = 0
