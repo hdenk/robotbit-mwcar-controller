@@ -87,6 +87,10 @@ function moveNorth () {
     motorSpeed
     )
 }
+function playMelody () {
+    music.setVolume(255)
+    music.startMelody(music.builtInMelody(Melodies.PowerUp), MelodyOptions.OnceInBackground)
+}
 function calcMotorSpeed (amount: number) {
     return Math.map(Math.constrain(amount, 0, 1024), 0, 1024, 0, 256)
 }
@@ -239,9 +243,9 @@ let strip: neopixel.Strip = null
 let colors: number[] = []
 let motorSpeed = 0
 let receivedNumber = 0
-let playMelodyOnStartup = false
+let playMelodyOnStartup = true
 if (playMelodyOnStartup) {
-    music.playMelody("- F A E F - A - ", 120)
+    playMelody()
 }
 let lightShowOnStartup = true
 if (lightShowOnStartup) {
