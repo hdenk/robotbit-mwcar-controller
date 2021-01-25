@@ -223,6 +223,21 @@ function displayMovement (buttonState: number, sector: number) {
         # . . . #
         `)
 }
+function readDistanceinCentimeters () {
+    pins.digitalWritePin(DigitalPin.P8, 0)
+    control.waitMicros(2)
+    pins.digitalWritePin(DigitalPin.P8, 1)
+    control.waitMicros(20)
+    pins.digitalWritePin(DigitalPin.P8, 0)
+    distanceSensorPulseLength = pins.pulseIn(DigitalPin.P8, PulseValue.High)
+    distanceInCentimeters = distanceSensorPulseLength * 0.02637931
+    if (distanceInCentimeters > 0) {
+        lastDistanceInCentimeters = distanceInCentimeters
+    } else {
+        distanceInCentimeters = lastDistanceInCentimeters
+    }
+    return distanceInCentimeters
+}
 function lightShow () {
     colors = [neopixel.rgb(1, 0, 0), neopixel.rgb(0, 1, 0), neopixel.rgb(0, 0, 1)]
     strip = neopixel.create(DigitalPin.P16, 4, NeoPixelMode.RGB)
@@ -241,8 +256,11 @@ function lightShow () {
 let receivedNumberStern = 0
 let strip: neopixel.Strip = null
 let colors: number[] = []
+let distanceInCentimeters = 0
+let distanceSensorPulseLength = 0
 let motorSpeed = 0
 let receivedNumber = 0
+let lastDistanceInCentimeters = 0
 let playMelodyOnStartup = true
 if (playMelodyOnStartup) {
     playMelody()
@@ -251,6 +269,7 @@ let lightShowOnStartup = true
 if (lightShowOnStartup) {
     lightShow()
 }
+lastDistanceInCentimeters = 250
 radio.setGroup(0)
 let moveNESWNWSE = false
 receivedNumber = 0
@@ -264,6 +283,9 @@ basic.forever(function () {
     receivedAmount = Math.idiv(receivedNumberStern, 16)
     recievedSector = receivedNumberStern - receivedAmount * 16
     motorSpeed = calcMotorSpeed(receivedAmount)
+    if (readDistanceinCentimeters() < 10) {
+        receivedButtonState = 3
+    }
     if (receivedButtonState > 0) {
         if (receivedButtonState == 1) {
             spinLeft()
