@@ -92,7 +92,7 @@ function playMelody () {
     music.startMelody(music.builtInMelody(Melodies.PowerUp), MelodyOptions.OnceInBackground)
 }
 function calcMotorSpeed (amount: number) {
-    return Math.map(Math.constrain(amount, 0, 1024), 0, 1024, 0, 511)
+    return Math.map(Math.constrain(amount, 0, 1024), 0, 1024, 0, 256)
 }
 function spinRight () {
     robotbit.MotorRunDual(
