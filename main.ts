@@ -270,7 +270,7 @@ if (lightShowOnStartup) {
     lightShow()
 }
 let distanceSensorEnabled = true
-let maxDistanceInCentimeters = 10
+let maxDistanceInCentimeters = 15
 lastDistanceInCentimeters = 250
 radio.setGroup(0)
 let moveNESWNWSE = false
