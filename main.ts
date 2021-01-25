@@ -92,7 +92,7 @@ function playMelody () {
     music.startMelody(music.builtInMelody(Melodies.PowerUp), MelodyOptions.OnceInBackground)
 }
 function calcMotorSpeed (amount: number) {
-    return Math.map(Math.constrain(amount, 0, 1024), 0, 1024, 0, 256)
+    return Math.map(Math.constrain(amount, 0, 1024), 0, 1024, 0, 255)
 }
 function spinRight () {
     robotbit.MotorRunDual(
@@ -302,20 +302,20 @@ basic.forever(function () {
         } else if (recievedSector == 2) {
             moveEast()
         } else if (recievedSector == 3) {
-            if (distanceSensorEnabled && readDistanceinCentimeters() < maxDistanceInCentimeters) {
+            if (distanceSensorEnabled && readDistanceinCentimeters() > maxDistanceInCentimeters) {
                 moveNorth()
             }
         } else if (recievedSector == 4) {
             moveSouth()
         } else if (recievedSector == 5) {
             if (moveNESWNWSE) {
-                if (distanceSensorEnabled && readDistanceinCentimeters() < maxDistanceInCentimeters) {
+                if (distanceSensorEnabled && readDistanceinCentimeters() > maxDistanceInCentimeters) {
                     moveNorthWest()
                 }
             }
         } else if (recievedSector == 6) {
             if (moveNESWNWSE) {
-                if (distanceSensorEnabled && readDistanceinCentimeters() < maxDistanceInCentimeters) {
+                if (distanceSensorEnabled && readDistanceinCentimeters() > maxDistanceInCentimeters) {
                     moveNorthEast()
                 }
             }
