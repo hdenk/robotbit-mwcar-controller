@@ -269,6 +269,8 @@ let lightShowOnStartup = true
 if (lightShowOnStartup) {
     lightShow()
 }
+let distanceSensorEnabled = true
+let maxDistanceInCentimeters = 10
 lastDistanceInCentimeters = 250
 radio.setGroup(0)
 let moveNESWNWSE = false
@@ -283,9 +285,6 @@ basic.forever(function () {
     receivedAmount = Math.idiv(receivedNumberStern, 16)
     recievedSector = receivedNumberStern - receivedAmount * 16
     motorSpeed = calcMotorSpeed(receivedAmount)
-    if (readDistanceinCentimeters() < 10) {
-        receivedButtonState = 3
-    }
     if (receivedButtonState > 0) {
         if (receivedButtonState == 1) {
             spinLeft()
@@ -303,16 +302,22 @@ basic.forever(function () {
         } else if (recievedSector == 2) {
             moveEast()
         } else if (recievedSector == 3) {
-            moveNorth()
+            if (distanceSensorEnabled && readDistanceinCentimeters() < maxDistanceInCentimeters) {
+                moveNorth()
+            }
         } else if (recievedSector == 4) {
             moveSouth()
         } else if (recievedSector == 5) {
             if (moveNESWNWSE) {
-                moveNorthWest()
+                if (distanceSensorEnabled && readDistanceinCentimeters() < maxDistanceInCentimeters) {
+                    moveNorthWest()
+                }
             }
         } else if (recievedSector == 6) {
             if (moveNESWNWSE) {
-                moveNorthEast()
+                if (distanceSensorEnabled && readDistanceinCentimeters() < maxDistanceInCentimeters) {
+                    moveNorthEast()
+                }
             }
         } else if (recievedSector == 7) {
             if (moveNESWNWSE) {
