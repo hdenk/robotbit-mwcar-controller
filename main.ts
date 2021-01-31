@@ -107,7 +107,7 @@ function spinRight () {
     motorSpeed * -1
     )
 }
-function displayMovement (buttonState: number, sector: number) {
+function movementDisplay (buttonState: number, sector: number) {
     if (buttonState == 1) {
         return images.createImage(`
             . . . . .
@@ -152,17 +152,17 @@ function displayMovement (buttonState: number, sector: number) {
     } else if (sector == 3) {
         return images.createImage(`
             . . # . .
-            . # # # .
-            # . # . #
             . . # . .
+            # . # . #
+            . # # # .
             . . # . .
             `)
     } else if (sector == 4) {
         return images.createImage(`
             . . # . .
-            . . # . .
-            # . # . #
             . # # # .
+            # . # . #
+            . . # . .
             . . # . .
             `)
     }
@@ -208,7 +208,7 @@ let statistics_MainLoopCount = 0
 let distanceSensorEnabled = true
 let statistics_DistanceMeasurementCount = 0
 let distanceMeasurementIntervalMs = 33
-let distanceSensorRangeConversionFactor = 0.017386364
+let distanceSensorRangeConversionFactor = 0.02637931
 distanceSensorPulseLength = 0
 let distanceInCentimeters = 0
 let maxDistanceInCentimeters = 15
@@ -272,7 +272,7 @@ basic.forever(function () {
                 robotbit.MotorStopAll()
             }
         }
-        displayMovement(receivedButtonState, recievedSector).showImage(0)
+        movementDisplay(receivedButtonState, recievedSector).showImage(0)
     } else {
         images.createImage(`
             . . . . .
