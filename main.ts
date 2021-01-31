@@ -157,11 +157,11 @@ function displayMovement (buttonState: number, sector: number) {
     }
     if (sector == 0) {
         return images.createImage(`
-            # . . . #
-            . # . # .
+            . . . . .
             . . # . .
-            . # . # .
-            # . . . #
+            . # # # .
+            . . # . .
+            . . . . .
             `)
     } else if (sector == 1) {
         return images.createImage(`
