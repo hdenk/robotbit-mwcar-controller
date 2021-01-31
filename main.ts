@@ -29,8 +29,12 @@ function moveEast () {
     )
 }
 function sendStatisticsToSerial () {
-    serial.writeValue("radioEventCount", statistics_RadioEventCount)
-    serial.writeValue("distanceMeasurementCount", statistics_DistanceMeasurementCount)
+    serial.writeValue("mainLoops", statistics_MainLoopCount)
+    serial.writeLine("")
+    serial.writeValue("radioEvents", statistics_RadioEventCount)
+    serial.writeLine("")
+    serial.writeValue("distanceMeasurements", statistics_DistanceMeasurementCount)
+    serial.writeLine("")
 }
 function spinLeft () {
     robotbit.MotorRunDual(
@@ -266,6 +270,7 @@ let messagefromRemoteIsPending = false
 let statistics_RadioEventCount = 0
 let distanceSensorPulseLength = 0
 let statistics_DistanceMeasurementCount = 0
+let statistics_MainLoopCount = 0
 let playMelodyOnStartup = true
 if (playMelodyOnStartup) {
     playMelody()
@@ -274,6 +279,7 @@ let lightShowOnStartup = true
 if (lightShowOnStartup) {
     lightShow()
 }
+statistics_MainLoopCount = 0
 let distanceSensorEnabled = true
 statistics_DistanceMeasurementCount = 0
 let distanceMeasurementIntervalMs = 33
@@ -292,6 +298,7 @@ let receivedAmount = 0
 let receivedButtonState = 0
 motorSpeed = 0
 basic.forever(function () {
+    statistics_MainLoopCount += 1
     if (distanceSensorEnabled && input.runningTime() - distanceMeasurementAt > distanceMeasurementIntervalMs) {
         distanceMeasurementAt = input.runningTime()
         triggerDistanceMeasurement()
