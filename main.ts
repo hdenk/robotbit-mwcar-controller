@@ -28,14 +28,6 @@ function moveEast () {
     motorSpeed * -1
     )
 }
-function sendStatisticsToSerial () {
-    serial.writeValue("mainLoops", statistics_MainLoopCount)
-    serial.writeLine("")
-    serial.writeValue("radioEvents", statistics_RadioEventCount)
-    serial.writeLine("")
-    serial.writeValue("distanceMeasurements", statistics_DistanceMeasurementCount)
-    serial.writeLine("")
-}
 function spinLeft () {
     robotbit.MotorRunDual(
     robotbit.Motors.M2B,
@@ -267,10 +259,7 @@ let colors: number[] = []
 let motorSpeed = 0
 let receivedNumber = 0
 let messagefromRemoteIsPending = false
-let statistics_RadioEventCount = 0
 let distanceSensorPulseLength = 0
-let statistics_DistanceMeasurementCount = 0
-let statistics_MainLoopCount = 0
 let playMelodyOnStartup = true
 if (playMelodyOnStartup) {
     playMelody()
@@ -279,17 +268,18 @@ let lightShowOnStartup = true
 if (lightShowOnStartup) {
     lightShow()
 }
-statistics_MainLoopCount = 0
+let statistics_MainLoopCount = 0
 let distanceSensorEnabled = true
-statistics_DistanceMeasurementCount = 0
+let statistics_DistanceMeasurementCount = 0
 let distanceMeasurementIntervalMs = 33
+let distanceSensorRangeConversionFactor = 0.02637931
 distanceSensorPulseLength = 0
 let distanceInCentimeters = 0
 let maxDistanceInCentimeters = 15
 let lastDistanceInCentimeters = 250
 let distanceMeasurementAt = 0
 radio.setGroup(0)
-statistics_RadioEventCount = 0
+let statistics_RadioEventCount = 0
 messagefromRemoteIsPending = false
 let moveNESWNWSE = false
 receivedNumber = 0
@@ -303,7 +293,7 @@ basic.forever(function () {
         distanceMeasurementAt = input.runningTime()
         triggerDistanceMeasurement()
         if (distanceSensorPulseLength > 0) {
-            distanceInCentimeters = distanceSensorPulseLength * 0.02637931
+            distanceInCentimeters = distanceSensorPulseLength * distanceSensorRangeConversionFactor
             lastDistanceInCentimeters = distanceInCentimeters
             distanceSensorPulseLength = 0
         } else {
@@ -323,7 +313,6 @@ basic.forever(function () {
                 spinRight()
             } else {
                 robotbit.MotorStopAll()
-                sendStatisticsToSerial()
             }
         } else {
             if (recievedSector == 0 || receivedAmount == 0) {
