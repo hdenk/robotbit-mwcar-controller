@@ -6,14 +6,6 @@ function triggerDistanceMeasurement () {
     pins.digitalWritePin(DigitalPin.P8, 0)
     pins.setEvents(DigitalPin.P8, PinEventType.Pulse)
 }
-function moveSouthEast () {
-    robotbit.MotorRunDual(
-    robotbit.Motors.M1A,
-    motorSpeed * -1,
-    robotbit.Motors.M1B,
-    motorSpeed * -1
-    )
-}
 function moveEast () {
     robotbit.MotorRunDual(
     robotbit.Motors.M2B,
@@ -70,14 +62,6 @@ function moveSouth () {
     motorSpeed * -1
     )
 }
-function moveNorthWest () {
-    robotbit.MotorRunDual(
-    robotbit.Motors.M2B,
-    motorSpeed,
-    robotbit.Motors.M2A,
-    motorSpeed
-    )
-}
 radio.onReceivedNumberDeprecated(function (receivedNumberEVT) {
     receivedNumber = receivedNumberEVT
     messagefromRemoteIsPending = true
@@ -121,22 +105,6 @@ function spinRight () {
     motorSpeed * -1,
     robotbit.Motors.M1B,
     motorSpeed * -1
-    )
-}
-function moveNorthEast () {
-    robotbit.MotorRunDual(
-    robotbit.Motors.M1A,
-    motorSpeed * -1,
-    robotbit.Motors.M1B,
-    motorSpeed * -1
-    )
-}
-function moveSouthWest () {
-    robotbit.MotorRunDual(
-    robotbit.Motors.M1A,
-    motorSpeed,
-    robotbit.Motors.M1B,
-    motorSpeed
     )
 }
 function displayMovement (buttonState: number, sector: number) {
@@ -197,38 +165,6 @@ function displayMovement (buttonState: number, sector: number) {
             . # # # .
             . . # . .
             `)
-    } else if (sector == 5) {
-        return images.createImage(`
-            # # # # .
-            # # . . .
-            # . # . .
-            # . # . .
-            . . # . .
-            `)
-    } else if (sector == 6) {
-        return images.createImage(`
-            . # # # #
-            . . . # #
-            . . # . #
-            . . # . #
-            . . # . .
-            `)
-    } else if (sector == 7) {
-        return images.createImage(`
-            . . # . .
-            . . # . #
-            . . # . #
-            . . . # #
-            . # # # #
-            `)
-    } else if (sector == 8) {
-        return images.createImage(`
-            . . # . .
-            # . # . .
-            # . # . .
-            # # . . .
-            # # # # .
-            `)
     }
     return images.createImage(`
         . . . . .
@@ -281,7 +217,6 @@ let distanceMeasurementAt = 0
 radio.setGroup(0)
 let statistics_RadioEventCount = 0
 messagefromRemoteIsPending = false
-let moveNESWNWSE = false
 receivedNumber = 0
 let recievedSector = 0
 let receivedAmount = 0
@@ -333,38 +268,6 @@ basic.forever(function () {
                 }
             } else if (recievedSector == 4) {
                 moveSouth()
-            } else if (recievedSector == 5) {
-                if (moveNESWNWSE) {
-                    if (distanceSensorEnabled) {
-                        if (distanceInCentimeters > maxDistanceInCentimeters) {
-                            moveNorthWest()
-                        } else {
-                            robotbit.MotorStopAll()
-                        }
-                    } else {
-                        moveNorthWest()
-                    }
-                }
-            } else if (recievedSector == 6) {
-                if (moveNESWNWSE) {
-                    if (distanceSensorEnabled) {
-                        if (distanceInCentimeters > maxDistanceInCentimeters) {
-                            moveNorthEast()
-                        } else {
-                            robotbit.MotorStopAll()
-                        }
-                    } else {
-                        moveNorthEast()
-                    }
-                }
-            } else if (recievedSector == 7) {
-                if (moveNESWNWSE) {
-                    moveSouthEast()
-                }
-            } else if (recievedSector == 8) {
-                if (moveNESWNWSE) {
-                    moveSouthWest()
-                }
             } else {
                 robotbit.MotorStopAll()
             }
