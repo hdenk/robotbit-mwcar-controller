@@ -283,8 +283,8 @@ let receivedButtonState = 0
 motorSpeed = 0
 basic.forever(function () {
     if (distanceSensorEnabled && input.runningTime() - distanceMeasurementAt > distanceMeasurementIntervalMs) {
-        triggerDistanceMeasurement()
         distanceMeasurementAt = input.runningTime()
+        triggerDistanceMeasurement()
         if (distanceSensorPulseLength > 0) {
             distanceInCentimeters = distanceSensorPulseLength * 0.02637931
             lastDistanceInCentimeters = distanceInCentimeters
@@ -306,7 +306,6 @@ basic.forever(function () {
                 spinRight()
             } else {
                 robotbit.MotorStopAll()
-                lightShow()
             }
         } else {
             if (recievedSector == 0 || receivedAmount == 0) {
