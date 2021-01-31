@@ -80,6 +80,7 @@ function moveNorthWest () {
 }
 radio.onReceivedNumberDeprecated(function (receivedNumberEVT) {
     receivedNumber = receivedNumberEVT
+    messagefromRemoteIsPending = true
 })
 function moveNorth () {
     robotbit.MotorRunDual(
@@ -255,6 +256,7 @@ let strip: neopixel.Strip = null
 let colors: number[] = []
 let motorSpeed = 0
 let receivedNumber = 0
+let messagefromRemoteIsPending = false
 let distanceSensorPulseLength = 0
 let playMelodyOnStartup = true
 if (playMelodyOnStartup) {
@@ -265,11 +267,14 @@ if (lightShowOnStartup) {
     lightShow()
 }
 let distanceSensorEnabled = true
+let distanceMeasurementIntervalMs = 20
 distanceSensorPulseLength = 0
 let distanceInCentimeters = 0
 let maxDistanceInCentimeters = 15
 let lastDistanceInCentimeters = 250
+let distanceMeasurementAt = 0
 radio.setGroup(0)
+messagefromRemoteIsPending = false
 let moveNESWNWSE = false
 receivedNumber = 0
 let recievedSector = 0
@@ -277,8 +282,9 @@ let receivedAmount = 0
 let receivedButtonState = 0
 motorSpeed = 0
 basic.forever(function () {
-    if (distanceSensorEnabled) {
+    if (distanceSensorEnabled && input.runningTime() - distanceMeasurementAt > distanceMeasurementIntervalMs) {
         triggerDistanceMeasurement()
+        distanceMeasurementAt = input.runningTime()
         if (distanceSensorPulseLength > 0) {
             distanceInCentimeters = distanceSensorPulseLength * 0.02637931
             lastDistanceInCentimeters = distanceInCentimeters
@@ -287,74 +293,84 @@ basic.forever(function () {
             distanceInCentimeters = lastDistanceInCentimeters
         }
     }
-    receivedButtonState = Math.idiv(receivedNumber, 65536)
-    receivedNumberStern = receivedNumber - receivedButtonState * 65536
-    receivedAmount = Math.idiv(receivedNumberStern, 16)
-    recievedSector = receivedNumberStern - receivedAmount * 16
-    motorSpeed = calcMotorSpeed(receivedAmount)
-    if (receivedButtonState > 0) {
-        if (receivedButtonState == 1) {
-            spinLeft()
-        } else if (receivedButtonState == 2) {
-            spinRight()
+    if (messagefromRemoteIsPending) {
+        receivedButtonState = Math.idiv(receivedNumber, 65536)
+        receivedNumberStern = receivedNumber - receivedButtonState * 65536
+        receivedAmount = Math.idiv(receivedNumberStern, 16)
+        recievedSector = receivedNumberStern - receivedAmount * 16
+        motorSpeed = calcMotorSpeed(receivedAmount)
+        if (receivedButtonState > 0) {
+            if (receivedButtonState == 1) {
+                spinLeft()
+            } else if (receivedButtonState == 2) {
+                spinRight()
+            } else {
+                robotbit.MotorStopAll()
+                lightShow()
+            }
         } else {
-            robotbit.MotorStopAll()
-            lightShow()
-        }
-    } else {
-        if (recievedSector == 0 || receivedAmount == 0) {
-            robotbit.MotorStopAll()
-        } else if (recievedSector == 1) {
-            moveWest()
-        } else if (recievedSector == 2) {
-            moveEast()
-        } else if (recievedSector == 3) {
-            if (distanceSensorEnabled) {
-                if (distanceInCentimeters > maxDistanceInCentimeters) {
-                    moveNorth()
+            if (recievedSector == 0 || receivedAmount == 0) {
+                robotbit.MotorStopAll()
+            } else if (recievedSector == 1) {
+                moveWest()
+            } else if (recievedSector == 2) {
+                moveEast()
+            } else if (recievedSector == 3) {
+                if (distanceSensorEnabled) {
+                    if (distanceInCentimeters > maxDistanceInCentimeters) {
+                        moveNorth()
+                    } else {
+                        robotbit.MotorStopAll()
+                    }
                 } else {
-                    robotbit.MotorStopAll()
+                    moveNorth()
+                }
+            } else if (recievedSector == 4) {
+                moveSouth()
+            } else if (recievedSector == 5) {
+                if (moveNESWNWSE) {
+                    if (distanceSensorEnabled) {
+                        if (distanceInCentimeters > maxDistanceInCentimeters) {
+                            moveNorthWest()
+                        } else {
+                            robotbit.MotorStopAll()
+                        }
+                    } else {
+                        moveNorthWest()
+                    }
+                }
+            } else if (recievedSector == 6) {
+                if (moveNESWNWSE) {
+                    if (distanceSensorEnabled) {
+                        if (distanceInCentimeters > maxDistanceInCentimeters) {
+                            moveNorthEast()
+                        } else {
+                            robotbit.MotorStopAll()
+                        }
+                    } else {
+                        moveNorthEast()
+                    }
+                }
+            } else if (recievedSector == 7) {
+                if (moveNESWNWSE) {
+                    moveSouthEast()
+                }
+            } else if (recievedSector == 8) {
+                if (moveNESWNWSE) {
+                    moveSouthWest()
                 }
             } else {
-                moveNorth()
+                robotbit.MotorStopAll()
             }
-        } else if (recievedSector == 4) {
-            moveSouth()
-        } else if (recievedSector == 5) {
-            if (moveNESWNWSE) {
-                if (distanceSensorEnabled) {
-                    if (distanceInCentimeters > maxDistanceInCentimeters) {
-                        moveNorthWest()
-                    } else {
-                        robotbit.MotorStopAll()
-                    }
-                } else {
-                    moveNorthWest()
-                }
-            }
-        } else if (recievedSector == 6) {
-            if (moveNESWNWSE) {
-                if (distanceSensorEnabled) {
-                    if (distanceInCentimeters > maxDistanceInCentimeters) {
-                        moveNorthEast()
-                    } else {
-                        robotbit.MotorStopAll()
-                    }
-                } else {
-                    moveNorthEast()
-                }
-            }
-        } else if (recievedSector == 7) {
-            if (moveNESWNWSE) {
-                moveSouthEast()
-            }
-        } else if (recievedSector == 8) {
-            if (moveNESWNWSE) {
-                moveSouthWest()
-            }
-        } else {
-            robotbit.MotorStopAll()
         }
+        displayMovement(receivedButtonState, recievedSector).showImage(0)
+    } else {
+        images.createImage(`
+            . . . . .
+            . # # # .
+            . # # # .
+            . # # # .
+            . . . . .
+            `).showImage(0)
     }
-    displayMovement(receivedButtonState, recievedSector).showImage(0)
 })
