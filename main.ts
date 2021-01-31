@@ -28,6 +28,10 @@ function moveEast () {
     motorSpeed * -1
     )
 }
+function sendStatisticsToSerial () {
+    serial.writeValue("radioEventCount", statistics_RadioEventCount)
+    serial.writeValue("distanceMeasurementCount", statistics_DistanceMeasurementCount)
+}
 function spinLeft () {
     robotbit.MotorRunDual(
     robotbit.Motors.M2B,
@@ -81,6 +85,7 @@ function moveNorthWest () {
 radio.onReceivedNumberDeprecated(function (receivedNumberEVT) {
     receivedNumber = receivedNumberEVT
     messagefromRemoteIsPending = true
+    statistics_RadioEventCount += 1
 })
 function moveNorth () {
     robotbit.MotorRunDual(
@@ -105,6 +110,7 @@ function calcMotorSpeed (amount: number) {
 }
 pins.onPulsed(DigitalPin.P8, PulseValue.High, function () {
     distanceSensorPulseLength = pins.pulseDuration()
+    statistics_DistanceMeasurementCount += 1
     pins.setEvents(DigitalPin.P8, PinEventType.None)
 })
 function spinRight () {
@@ -257,7 +263,9 @@ let colors: number[] = []
 let motorSpeed = 0
 let receivedNumber = 0
 let messagefromRemoteIsPending = false
+let statistics_RadioEventCount = 0
 let distanceSensorPulseLength = 0
+let statistics_DistanceMeasurementCount = 0
 let playMelodyOnStartup = true
 if (playMelodyOnStartup) {
     playMelody()
@@ -267,13 +275,15 @@ if (lightShowOnStartup) {
     lightShow()
 }
 let distanceSensorEnabled = true
-let distanceMeasurementIntervalMs = 20
+statistics_DistanceMeasurementCount = 0
+let distanceMeasurementIntervalMs = 33
 distanceSensorPulseLength = 0
 let distanceInCentimeters = 0
 let maxDistanceInCentimeters = 15
 let lastDistanceInCentimeters = 250
 let distanceMeasurementAt = 0
 radio.setGroup(0)
+statistics_RadioEventCount = 0
 messagefromRemoteIsPending = false
 let moveNESWNWSE = false
 receivedNumber = 0
@@ -306,6 +316,7 @@ basic.forever(function () {
                 spinRight()
             } else {
                 robotbit.MotorStopAll()
+                sendStatisticsToSerial()
             }
         } else {
             if (recievedSector == 0 || receivedAmount == 0) {
