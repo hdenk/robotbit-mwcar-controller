@@ -1,3 +1,11 @@
+function triggerDistanceMeasurement () {
+    pins.digitalWritePin(DigitalPin.P8, 0)
+    control.waitMicros(2)
+    pins.digitalWritePin(DigitalPin.P8, 1)
+    control.waitMicros(20)
+    pins.digitalWritePin(DigitalPin.P8, 0)
+    pins.setEvents(DigitalPin.P8, PinEventType.Pulse)
+}
 function moveSouthEast () {
     robotbit.MotorRunDual(
     robotbit.Motors.M1A,
@@ -94,6 +102,10 @@ function playMelody () {
 function calcMotorSpeed (amount: number) {
     return Math.map(Math.constrain(amount, 0, 1024), 0, 1024, 0, 256)
 }
+pins.onPulsed(DigitalPin.P8, PulseValue.High, function () {
+    distanceSensorPulseLength = pins.pulseDuration()
+    pins.setEvents(DigitalPin.P8, PinEventType.None)
+})
 function spinRight () {
     robotbit.MotorRunDual(
     robotbit.Motors.M2B,
@@ -223,21 +235,6 @@ function displayMovement (buttonState: number, sector: number) {
         # . . . #
         `)
 }
-function readDistanceinCentimeters () {
-    pins.digitalWritePin(DigitalPin.P8, 0)
-    control.waitMicros(2)
-    pins.digitalWritePin(DigitalPin.P8, 1)
-    control.waitMicros(20)
-    pins.digitalWritePin(DigitalPin.P8, 0)
-    distanceSensorPulseLength = pins.pulseIn(DigitalPin.P8, PulseValue.High)
-    distanceInCentimeters = distanceSensorPulseLength * 0.02637931
-    if (distanceInCentimeters > 0) {
-        lastDistanceInCentimeters = distanceInCentimeters
-    } else {
-        distanceInCentimeters = lastDistanceInCentimeters
-    }
-    return distanceInCentimeters
-}
 function lightShow () {
     colors = [neopixel.rgb(1, 0, 0), neopixel.rgb(0, 1, 0), neopixel.rgb(0, 0, 1)]
     strip = neopixel.create(DigitalPin.P16, 4, NeoPixelMode.RGB)
@@ -256,11 +253,9 @@ function lightShow () {
 let receivedNumberStern = 0
 let strip: neopixel.Strip = null
 let colors: number[] = []
-let distanceInCentimeters = 0
-let distanceSensorPulseLength = 0
 let motorSpeed = 0
 let receivedNumber = 0
-let lastDistanceInCentimeters = 0
+let distanceSensorPulseLength = 0
 let playMelodyOnStartup = true
 if (playMelodyOnStartup) {
     playMelody()
@@ -270,8 +265,10 @@ if (lightShowOnStartup) {
     lightShow()
 }
 let distanceSensorEnabled = true
+distanceSensorPulseLength = 0
+let distanceInCentimeters = 0
 let maxDistanceInCentimeters = 15
-lastDistanceInCentimeters = 250
+let lastDistanceInCentimeters = 250
 radio.setGroup(0)
 let moveNESWNWSE = false
 receivedNumber = 0
@@ -280,6 +277,16 @@ let receivedAmount = 0
 let receivedButtonState = 0
 motorSpeed = 0
 basic.forever(function () {
+    if (distanceSensorEnabled) {
+        triggerDistanceMeasurement()
+        if (distanceSensorPulseLength > 0) {
+            distanceInCentimeters = distanceSensorPulseLength * 0.02637931
+            lastDistanceInCentimeters = distanceInCentimeters
+            distanceSensorPulseLength = 0
+        } else {
+            distanceInCentimeters = lastDistanceInCentimeters
+        }
+    }
     receivedButtonState = Math.idiv(receivedNumber, 65536)
     receivedNumberStern = receivedNumber - receivedButtonState * 65536
     receivedAmount = Math.idiv(receivedNumberStern, 16)
@@ -302,20 +309,38 @@ basic.forever(function () {
         } else if (recievedSector == 2) {
             moveEast()
         } else if (recievedSector == 3) {
-            if (distanceSensorEnabled && readDistanceinCentimeters() > maxDistanceInCentimeters) {
+            if (distanceSensorEnabled) {
+                if (distanceInCentimeters > maxDistanceInCentimeters) {
+                    moveNorth()
+                } else {
+                    robotbit.MotorStopAll()
+                }
+            } else {
                 moveNorth()
             }
         } else if (recievedSector == 4) {
             moveSouth()
         } else if (recievedSector == 5) {
             if (moveNESWNWSE) {
-                if (distanceSensorEnabled && readDistanceinCentimeters() > maxDistanceInCentimeters) {
+                if (distanceSensorEnabled) {
+                    if (distanceInCentimeters > maxDistanceInCentimeters) {
+                        moveNorthWest()
+                    } else {
+                        robotbit.MotorStopAll()
+                    }
+                } else {
                     moveNorthWest()
                 }
             }
         } else if (recievedSector == 6) {
             if (moveNESWNWSE) {
-                if (distanceSensorEnabled && readDistanceinCentimeters() > maxDistanceInCentimeters) {
+                if (distanceSensorEnabled) {
+                    if (distanceInCentimeters > maxDistanceInCentimeters) {
+                        moveNorthEast()
+                    } else {
+                        robotbit.MotorStopAll()
+                    }
+                } else {
                     moveNorthEast()
                 }
             }
